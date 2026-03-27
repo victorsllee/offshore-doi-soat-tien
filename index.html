@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chốt Tiền Cuối Ca</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Mobile First & Modern App Styles */
+        :root {
+            --primary: #4f46e5;
+            --bg-color: #f3f4f6;
+            --card-bg: #ffffff;
+            --text-main: #1f2937;
+            --text-muted: #6b7280;
+            --border-color: #e5e7eb;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+        }
+
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
+            background: var(--bg-color); 
+            margin: 0; 
+            padding: 10px; 
+            color: var(--text-main);
+        }
+
+        .app-container { 
+            max-width: 500px; 
+            margin: auto; 
+            padding-bottom: 30px;
+        }
+
+        /* Header */
+        .app-header {
+            text-align: center;
+            padding: 20px 0;
+            margin-bottom: 10px;
+        }
+        .app-header h1 { margin: 0; font-size: 26px; color: var(--primary); font-weight: 800;}
+        .app-header p { margin: 5px 0 0 0; color: var(--text-muted); font-size: 14px;}
+
+        /* Cards */
+        .card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+        }
+
+        h2 { 
+            font-size: 18px; 
+            margin-top: 0; 
+            margin-bottom: 15px; 
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .section-note { 
+            font-size: 13px; 
+            color: var(--text-muted); 
+            margin-bottom: 15px; 
+            display: block; 
+            background: #fffbeb;
+            padding: 10px;
+            border-radius: 8px;
+            border-left: 4px solid var(--warning);
+        }
+
+        /* Inputs */
+        .input-group { 
+            margin-bottom: 16px; 
+        }
+        .input-group label { 
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600; 
+            color: #4b5563; 
+            margin-bottom: 8px;
+            font-size: 15px;
+        }
+        .icon-label { color: var(--primary); width: 20px; text-align: center;}
+        
+        .input-wrapper { 
+            display: flex; 
+            align-items: center; 
+            border: 2px solid var(--border-color); 
+            border-radius: 12px; 
+            overflow: hidden; 
+            background: #fafafa;
+            transition: border-color 0.2s;
+        }
+        .input-wrapper:focus-within { border-color: var(--primary); }
+        
+        .input-wrapper input { 
+            border: none; 
+            padding: 14px; 
+            flex: 1; 
+            outline: none; 
+            width: 100%; 
+            box-sizing: border-box; 
+            font-size: 18px;
+            font-weight: bold;
+            color: var(--text-main);
+            background: transparent;
+        }
+        .input-wrapper .suffix { 
+            padding: 14px; 
+            color: var(--text-muted); 
+            font-size: 16px; 
+            font-weight: 600;
+        }
+
+        /* Target Cash Highlight */
+        .target-box {
+            background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%);
+            border-radius: 16px;
+            padding: 20px;
+            text-align: center;
+            margin: 20px 0;
+            box-shadow: inset 0 2px 4px rgba(255,255,255,0.5);
+            border: 2px solid #818cf8;
+        }
+        .target-box p { margin: 0; color: #3730a3; font-weight: 600; font-size: 16px; margin-bottom: 8px;}
+        .target-box .amount { font-size: 32px; font-weight: 900; color: #312e81;}
+
+        /* Bill Counting Grid */
+        .bill-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+        .bill-input-group label { margin-bottom: 5px; font-size: 14px; color: #374151;}
+        .bill-input-group input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid var(--border-color);
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: bold;
+            text-align: center;
+            box-sizing: border-box;
+            outline: none;
+        }
+        .bill-input-group input:focus { border-color: var(--primary); }
+
+        /* Final Results */
+        .result-card { background: var(--text-main); color: white; }
+        .result-card h2 { color: white; }
+        .summary-row { display: flex; justify-content: space-between; font-size: 16px; margin-bottom: 12px; color: #d1d5db;}
+        .summary-row span:last-child { font-weight: bold; color: white; font-size: 18px;}
+        
+        .status-badge { 
+            font-size: 22px; 
+            font-weight: 900; 
+            text-align: center; 
+            padding: 15px; 
+            border-radius: 12px; 
+            margin-top: 20px; 
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .balanced { background: var(--success); color: white; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);}
+        .shortage { background: var(--danger); color: white; box-shadow: 0 4px 15px rgba(239, 68, 68, 0.4);}
+        .overage { background: var(--warning); color: white; box-shadow: 0 4px 15px rgba(245, 158, 11, 0.4);}
+
+        button.clear-btn { 
+            width: 100%; 
+            padding: 16px; 
+            background: white; 
+            color: var(--danger); 
+            border: 2px solid var(--danger); 
+            border-radius: 12px; 
+            font-size: 16px; 
+            font-weight: bold;
+            cursor: pointer; 
+            margin-top: 10px; 
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+        }
+        button.clear-btn:active { background: #fef2f2; }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    <div class="app-header">
+        <h1><i class="fa-solid fa-calculator"></i> Chốt Tiền Cuối Ca</h1>
+        <p>Nhập số liệu để kiểm tra tiền mặt trong két</p>
+    </div>
+
+    <div class="card">
+        <h2><i class="fa-solid fa-receipt" style="color: var(--primary)"></i> Bước 1: Tiền Bán Được</h2>
+        <span class="section-note"><i class="fa-solid fa-circle-info"></i> Nhập số đã bỏ bớt 3 số 0. (Ví dụ: 150.000đ thì chỉ gõ <b>150</b>)</span>
+        
+        <div class="input-group">
+            <label><i class="fa-solid fa-wallet icon-label"></i> Tiền lẻ đầu ca (đã có sẵn)</label>
+            <div class="input-wrapper">
+                <input type="number" id="initialCash" min="0" placeholder="0" class="calc-input">
+                <span class="suffix">.000 đ</span>
+            </div>
+        </div>
+        <div class="input-group">
+            <label><i class="fa-solid fa-cash-register icon-label"></i> Tổng doanh thu trên máy</label>
+            <div class="input-wrapper">
+                <input type="number" id="totalSales" min="0" placeholder="0" class="calc-input">
+                <span class="suffix">.000 đ</span>
+            </div>
+        </div>
+        
+        <hr style="border: 0; border-top: 1px dashed #ccc; margin: 20px 0;">
+        <label style="color: #6b7280; font-size: 14px; margin-bottom: 10px; display:block; font-weight: bold;">TRỪ ĐI KHÁCH THANH TOÁN KHÔNG DÙNG TIỀN MẶT:</label>
+
+        <div class="input-group">
+            <label><i class="fa-solid fa-money-bill-transfer icon-label"></i> Khách Chuyển khoản (Momo, NH...)</label>
+            <div class="input-wrapper">
+                <input type="number" id="transfer" min="0" placeholder="0" class="calc-input">
+                <span class="suffix">.000 đ</span>
+            </div>
+        </div>
+        <div class="input-group">
+            <label><i class="fa-solid fa-credit-card icon-label"></i> Khách Quẹt thẻ</label>
+            <div class="input-wrapper">
+                <input type="number" id="card" min="0" placeholder="0" class="calc-input">
+                <span class="suffix">.000 đ</span>
+            </div>
+        </div>
+        <div class="input-group">
+            <label><i class="fa-solid fa-motorcycle icon-label"></i> Qua App (Grab, Shopee...)</label>
+            <div class="input-wrapper">
+                <input type="number" id="grab" min="0" placeholder="0" class="calc-input">
+                <span class="suffix">.000 đ</span>
+            </div>
+        </div>
+        <div class="input-group">
+            <label><i class="fa-solid fa-book-open icon-label"></i> Khách nợ / Ghi sổ</label>
+            <div class="input-wrapper">
+                <input type="number" id="debt" min="0" placeholder="0" class="calc-input">
+                <span class="suffix">.000 đ</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="target-box">
+        <p><i class="fa-solid fa-bullseye"></i> SỐ TIỀN MẶT CHẮC CHẮN PHẢI CÓ LÀ:</p>
+        <div class="amount" id="displayTheoreticalMid">0 ₫</div>
+    </div>
+
+    <div class="card">
+        <h2><i class="fa-solid fa-money-bill-wave" style="color: var(--success)"></i> Bước 2: Đếm Tiền Trong Két</h2>
+        <span class="section-note"><i class="fa-solid fa-hand-pointer"></i> Nhập <b>SỐ TỜ</b> tiền bạn đang đếm được</span>
+        
+        <div class="bill-grid">
+            <div class="bill-input-group">
+                <label>Tờ 500.000 đ</label>
+                <input type="number" id="qty500" data-val="500000" min="0" placeholder="0 tờ" class="calc-input bill-input">
+            </div>
+            <div class="bill-input-group">
+                <label>Tờ 200.000 đ</label>
+                <input type="number" id="qty200" data-val="200000" min="0" placeholder="0 tờ" class="calc-input bill-input">
+            </div>
+            <div class="bill-input-group">
+                <label>Tờ 100.000 đ</label>
+                <input type="number" id="qty100" data-val="100000" min="0" placeholder="0 tờ" class="calc-input bill-input">
+            </div>
+            <div class="bill-input-group">
+                <label>Tờ 50.000 đ</label>
+                <input type="number" id="qty50" data-val="50000" min="0" placeholder="0 tờ" class="calc-input bill-input">
+            </div>
+            <div class="bill-input-group">
+                <label>Tờ 20.000 đ</label>
+                <input type="number" id="qty20" data-val="20000" min="0" placeholder="0 tờ" class="calc-input bill-input">
+            </div>
+            <div class="bill-input-group">
+                <label>Tờ 10.000 đ</label>
+                <input type="number" id="qty10" data-val="10000" min="0" placeholder="0 tờ" class="calc-input bill-input">
+            </div>
+            <div class="bill-input-group">
+                <label>Tờ 5.000 đ</label>
+                <input type="number" id="qty5" data-val="5000" min="0" placeholder="0 tờ" class="calc-input bill-input">
+            </div>
+            <div class="bill-input-group">
+                <label>Tờ 1.000 đ / 2.000 đ</label>
+                <input type="number" id="qtySmall" data-val="1000" min="0" placeholder="Gộp chung đ" class="calc-input bill-input" style="font-size: 14px;">
+            </div>
+        </div>
+    </div>
+
+    <div class="card result-card">
+        <h2><i class="fa-solid fa-clipboard-check"></i> Kết Quả Cuối Cùng</h2>
+        <div class="summary-row">
+            <span>Tiền đáng lẽ phải có:</span>
+            <span id="displayTheoreticalBottom">0 ₫</span>
+        </div>
+        <div class="summary-row">
+            <span>Tiền bạn vừa đếm xong:</span>
+            <span id="displayActual">0 ₫</span>
+        </div>
+        <div class="summary-row" style="border-top: 1px solid #4b5563; padding-top: 15px; margin-top: 5px;">
+            <span>Lệch bao nhiêu?</span>
+            <span id="displayVariance">0 ₫</span>
+        </div>
+        <div id="statusBox" class="status-badge balanced"><i class="fa-solid fa-check-circle"></i> VỪA ĐỦ TIỀN</div>
+    </div>
+
+    <button class="clear-btn" onclick="clearForm()"><i class="fa-solid fa-trash-can"></i> Xóa Trắng Bảng Tính</button>
+</div>
+
+<script>
+    function getVal(id) {
+        return parseInt(document.getElementById(id).value) || 0;
+    }
+
+    function formatCurrency(num) {
+        return num.toLocaleString('vi-VN') + ' ₫'; 
+    }
+
+    function calculate() {
+        // 1. Tính tiền phải có (Nhân 1000 do giao diện đã rút gọn 3 số 0)
+        const initialCash = getVal('initialCash') * 1000;
+        const totalSales = getVal('totalSales') * 1000;
+        const transfer = getVal('transfer') * 1000;
+        const card = getVal('card') * 1000;
+        const grab = getVal('grab') * 1000;
+        const debt = getVal('debt') * 1000;
+
+        const theoreticalCash = (initialCash + totalSales) - (transfer + card + grab + debt);
+
+        // 2. Tính tiền vừa đếm
+        let actualCash = 0;
+        document.querySelectorAll('.bill-input').forEach(input => {
+            const val = parseInt(input.value) || 0;
+            // Xử lý riêng ô tiền lẻ gộp chung (người dùng nhập thẳng số tiền, không nhập số tờ)
+            if(input.id === 'qtySmall') {
+                 actualCash += val; // Coi như khách nhập tổng số tiền lẻ nhỏ
+            } else {
+                const denomination = parseInt(input.getAttribute('data-val'));
+                actualCash += (val * denomination);
+            }
+        });
+
+        // 3. Tính chênh lệch
+        const variance = actualCash - theoreticalCash;
+
+        // 4. Cập nhật giao diện
+        document.getElementById('displayTheoreticalMid').textContent = formatCurrency(theoreticalCash);
+        document.getElementById('displayTheoreticalBottom').textContent = formatCurrency(theoreticalCash);
+        document.getElementById('displayActual').textContent = formatCurrency(actualCash);
+        
+        // Hiển thị số chênh lệch dạng dương để dễ đọc, kèm dấu + / -
+        let varianceText = formatCurrency(Math.abs(variance));
+        if (variance < 0) varianceText = "- " + varianceText;
+        if (variance > 0) varianceText = "+ " + varianceText;
+        if (variance === 0) varianceText = "0 ₫";
+        document.getElementById('displayVariance').textContent = varianceText;
+
+        const statusBox = document.getElementById('statusBox');
+        if (variance === 0) {
+            statusBox.innerHTML = '<i class="fa-solid fa-check-circle"></i> VỪA ĐỦ TIỀN';
+            statusBox.className = "status-badge balanced";
+        } else if (variance < 0) {
+            statusBox.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> ĐANG THIẾU TIỀN';
+            statusBox.className = "status-badge shortage";
+        } else {
+            statusBox.innerHTML = '<i class="fa-solid fa-circle-exclamation"></i> ĐANG DƯ TIỀN';
+            statusBox.className = "status-badge overage";
+        }
+    }
+
+    // Lắng nghe sự kiện gõ phím
+    document.querySelectorAll('.calc-input').forEach(input => {
+        input.addEventListener('input', calculate);
+    });
+
+    // Xóa trắng form
+    function clearForm() {
+        if(confirm("Bạn có chắc muốn xóa hết số liệu vừa nhập không?")) {
+            document.querySelectorAll('.calc-input').forEach(input => input.value = '');
+            calculate();
+            window.scrollTo(0,0);
+        }
+    }
+</script>
+
+</body>
+</html>
