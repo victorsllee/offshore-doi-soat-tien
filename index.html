@@ -198,7 +198,7 @@
     </div>
 
     <div class="card">
-        <h2><i class="fa-solid fa-receipt" style="color: var(--primary)"></i> Bước 1: Tiền Bán Được</h2>
+        <h2><i class="fa-solid fa-receipt" style="color: var(--primary)"></i> Bước 1: Dữ Liệu Bán Hàng</h2>
         <span class="section-note"><i class="fa-solid fa-circle-info"></i> Nhập số đã bỏ bớt 3 số 0. (Ví dụ: 150.000đ thì chỉ gõ <b>150</b>)</span>
         
         <div class="input-group">
@@ -217,7 +217,7 @@
         </div>
         
         <hr style="border: 0; border-top: 1px dashed #ccc; margin: 20px 0;">
-        <label style="color: #6b7280; font-size: 14px; margin-bottom: 10px; display:block; font-weight: bold;">TRỪ ĐI KHÁCH THANH TOÁN KHÔNG DÙNG TIỀN MẶT:</label>
+        <label style="color: #6b7280; font-size: 14px; margin-bottom: 10px; display:block; font-weight: bold;">TRỪ ĐI KHÁCH THANH TOÁN KHÔNG BẰNG TIỀN MẶT:</label>
 
         <div class="input-group">
             <label><i class="fa-solid fa-money-bill-transfer icon-label"></i> Khách Chuyển khoản (Momo, NH...)</label>
@@ -244,6 +244,17 @@
             <label><i class="fa-solid fa-book-open icon-label"></i> Khách nợ / Ghi sổ</label>
             <div class="input-wrapper">
                 <input type="number" id="debt" min="0" placeholder="0" class="calc-input">
+                <span class="suffix">.000 đ</span>
+            </div>
+        </div>
+
+        <hr style="border: 0; border-top: 1px dashed #ccc; margin: 20px 0;">
+        <label style="color: #d97706; font-size: 14px; margin-bottom: 10px; display:block; font-weight: bold;">TIỀN TRONG KÉT ĐÃ LẤY RA CHI:</label>
+
+        <div class="input-group">
+            <label><i class="fa-solid fa-basket-shopping icon-label" style="color: #d97706;"></i> Lấy tiền két đi chợ, mua đồ...</label>
+            <div class="input-wrapper">
+                <input type="number" id="expenses" min="0" placeholder="0" class="calc-input">
                 <span class="suffix">.000 đ</span>
             </div>
         </div>
@@ -331,8 +342,10 @@
         const card = getVal('card') * 1000;
         const grab = getVal('grab') * 1000;
         const debt = getVal('debt') * 1000;
+        const expenses = getVal('expenses') * 1000; // Khoản chi đi chợ mới thêm
 
-        const theoreticalCash = (initialCash + totalSales) - (transfer + card + grab + debt);
+        // Công thức: (Tiền đầu ca + Doanh thu) - (Tiền khách không đưa tiền mặt + Tiền mặt đã mang đi tiêu)
+        const theoreticalCash = (initialCash + totalSales) - (transfer + card + grab + debt + expenses);
 
         // 2. Tính tiền vừa đếm
         let actualCash = 0;
